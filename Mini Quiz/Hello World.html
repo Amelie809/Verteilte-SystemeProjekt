@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="">
+</head>
+<body>
+<div id="app">
+  <h1>Mini-Quiz</h1>
+  {{hello}}
+  {{hello2}}
+</div>
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return{
+          hello: 'Hello ?',
+          hello2: 'Hello World!'
+        }
+    })
+
+    }
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

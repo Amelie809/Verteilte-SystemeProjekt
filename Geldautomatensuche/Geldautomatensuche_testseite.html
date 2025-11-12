@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Probeseite</title>
+  <link rel="stylesheet" href="Geldautimatensuche_testseite.css">
+</head>
+<body>
+<div class='streifen'>Geldautomatensuche</div>
+<div class="Überschrift">Filiale oder Geldautomat suchen</div>
+<div class="suchleiste">
+  <input type="text" placeholder="Wo wollen Sie suchen?" oninput="searchAtms()">
+</div>
+  <div class="Entfernung">Entfernungen:</div>
+<div class="dropdown">
+  <button onclick="myFunction()" id="dropbtn" class="dropbtn">Wähle</button>
+  <div id="myDropdown" class="dropdown-content">
+    <a href="#">300m</a>
+    <a href="#">500m</a>
+    <a href="#">1000m</a>
+  </div>
+</div>
+
+<div class="Öffnungszeit">Öffnungszeiten:</div>
+
+<div class="dropdown2">
+  <button id="dropbtn2" class="dropbtn2">Wähle</button>
+  <div id="myDropdown2" class="dropdown-content2">
+    <a href="#">Jetzt geöffnet</a>
+    <a href="#">Immer</a>
+  </div>
+</div>
+
+<!-- Karte -->
+<div id="map"></div>
+
+<!-- Leaflet-Bibliothek einbinden -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="Geldautomatensuche_testseite.js"></script>
+</body>
+</html>
