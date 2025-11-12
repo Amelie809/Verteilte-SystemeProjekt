@@ -94,18 +94,58 @@ let markers = [];
 
 // Funktion, um Marker zu aktualisieren
 function updateMap(atms) {
+  // alte Marker entfernen
   markers.forEach(marker => map.removeLayer(marker));
   markers = [];
 
+  // neue Marker hinzufügen
   atms.forEach(atm => {
-    // prüfen, ob beide Werte vorhanden sind
-    if (atm.breite != null && atm["Länge"] != null) {
-      const marker = L.marker([atm.breite, atm["Länge"]])
-        .addTo(map)
-        .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
-      markers.push(marker);
+    // prüfen, ob beide Werte existieren und Zahlen sind
+    if (atm.breite != null && atm.laenge != null) {
+      const lat = parseFloat(atm.breite);
+      const lng = parseFloat(atm.laenge);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
+        markers.push(marker);
+      } else {
+        console.warn("Koordinaten sind keine Zahlen:", atm);
+      }
     } else {
       console.warn("Ungültige Koordinaten für ATM:", atm);
     }
   });
+}
+
+function showUserLocation() {
+  if (!navigator.geolocation) {
+    alert("Dein Browser unterstützt keine Standortabfrage.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      // Marker oder Kreis für den Standort
+      const userMarker = L.circle([lat, lng], {
+        color: "blue",
+        fillColor: "#3b82f6",
+        fillOpacity: 0.5,
+        radius: 50
+      }).addTo(map);
+
+      // Karte auf Benutzerstandort zentrieren
+      map.setView([lat, lng], 15);
+
+      // Popup anzeigen
+      userMarker.bindPopup("Dein aktueller Standort").openPopup();
+    },
+    (error) => {
+      alert("Standort konnte nicht abgerufen werden: " + error.message);
+    }
+  );
 }
