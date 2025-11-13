@@ -68,6 +68,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
+//const lilaIcon = L.icon({
+ // iconUrl: 'standortmarkerlila.png',
+ // iconSize: [25, 41],
+ // iconAnchor: [12, 41],
+ // popupAnchor: [1, -34],
+//});
+
+//L.marker([atm.breite, atm.laenge], { icon: lilaIcon })
+//  .addTo(map)
+ // .bindPopup("Dein Text");
+
 // Beispielmarker hinzufügen
 L.marker([52.5200, 13.4050])
   .addTo(map)
@@ -106,7 +117,7 @@ function updateMap(atms) {
       const lng = parseFloat(atm.laenge);
 
       if (!isNaN(lat) && !isNaN(lng)) {
-        const marker = L.marker([lat, lng])
+        const marker = L.marker([lat, lng], { icon: lilaIcon })
           .addTo(map)
           .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
         markers.push(marker);
@@ -132,8 +143,8 @@ function showUserLocation() {
 
       // Marker oder Kreis für den Standort
       const userMarker = L.circle([lat, lng], {
-        color: "blue",
-        fillColor: "#3b82f6",
+        color: "#4b134f",
+        fillColor: "#70219a",
         fillOpacity: 0.5,
         radius: 50
       }).addTo(map);
@@ -149,3 +160,5 @@ function showUserLocation() {
     }
   );
 }
+
+
