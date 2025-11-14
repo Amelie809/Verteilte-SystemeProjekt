@@ -18,6 +18,23 @@ body {
   font-family: Arial, sans-serif;
   color: white;
 }
+
+.tiktok-icon {
+  width: 60px;
+  position: absolute;
+  top: 36px;
+  left: 1350px;
+  cursor: pointer;
+}
+
+.instagram-icon {
+  width: 60px;
+  position: absolute;
+  top: 25px;
+  left: 1275px;
+  cursor: pointer;
+}
+
 .Überschrift{
   font-family: Arial, sans-serif;
   color: black;
@@ -187,6 +204,63 @@ border-radius: 10px;
 }
 
 .dropdown-content2 a:hover {
+  background-color: #ddd;
+}
+
+.Bankart {
+  font-family: Arial, sans-serif;
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  position: absolute;
+  top: 300px;
+  left: 47%;
+}
+
+.dropbtn3 {
+  background-color: #4b134f;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Hover-Effekt */
+.dropbtn3:hover, .dropbtn2:focus {
+  background-color: lightgray;
+}
+
+/* Container */
+.dropdown3 {
+  position: relative; /* wichtig: Dropdown-Liste wird relativ zum Button positioniert */
+  display: inline-block;
+  margin-left: 13%;  /* Abstand von links */
+  margin-top: 25px; /* Abstand nach oben */
+  z-index: 1000;
+}
+
+/* Dropdown-Inhalt */
+.dropdown-content3 {
+  display: none;
+  position: absolute;  /* relativ zum Container .dropdown2 */
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 2000;
+  border-radius: 15px;
+}
+
+/* Links */
+.dropdown-content3 a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content3 a:hover {
   background-color: #ddd;
 }
 

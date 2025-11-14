@@ -1,10 +1,10 @@
 
 
 
-// Dropdown ein-/ausblenden
-function myFunction() {
-  document.getElementById("myDropdown").classList.toggle("show");
-}
+document.getElementById("dropbtn").addEventListener("click", function(event){
+  toggleDropdown("myDropdown");
+  event.stopPropagation();
+});
 
 // Text der geklickten Option in den Button schreiben
 document.querySelectorAll('#myDropdown a').forEach(item => {
@@ -16,18 +16,6 @@ document.querySelectorAll('#myDropdown a').forEach(item => {
   });
 });
 
-// Dropdown schließen, wenn außerhalb geklickt wird
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    const dropdowns = document.getElementsByClassName("dropdown-content");
-    for (let i = 0; i < dropdowns.length; i++) {
-      const openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
 
 // generische Funktion zum Öffnen/Schließen
 function toggleDropdown(dropdownId) {
@@ -49,15 +37,28 @@ document.querySelectorAll("#myDropdown2 a").forEach(item => {
   });
 });
 
-// Dropdown schließen, wenn außerhalb geklickt wird
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn2')) {
-    const dropdown = document.getElementById("myDropdown2");
-    if (dropdown.classList.contains('show')) {
-      dropdown.classList.remove("show");
-    }
-  }
-}
+
+
+// Klick auf Button3
+document.getElementById("dropbtn3").addEventListener("click", function(event) {
+  toggleDropdown("myDropdown3");
+  event.stopPropagation(); // verhindert, dass window.onclick sofort das Dropdown wieder schließt
+});
+
+// Auswahl einer Option
+document.querySelectorAll("#myDropdown3 a").forEach(item => {
+  item.addEventListener("click", function(e) {
+    e.preventDefault();
+    document.getElementById("dropbtn3").textContent = this.textContent;
+    document.getElementById("myDropdown3").classList.remove("show");
+  });
+});
+
+
+window.addEventListener("click", function(){
+  document.querySelectorAll(".dropdown-content, .dropdown-content2, .dropdown-content3")
+    .forEach(menu => menu.classList.remove("show"));
+});
 
 // Karte initialisieren (Mittelpunkt Deutschland)
 const map = L.map('map').setView([51.1657, 10.4515], 6);
