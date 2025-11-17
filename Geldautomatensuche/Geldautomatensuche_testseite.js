@@ -1,165 +1,223 @@
 
-
-
 document.getElementById("dropbtn").addEventListener("click", function(event){
   toggleDropdown("myDropdown");
   event.stopPropagation();
 });
 
-// Text der geklickten Option in den Button schreiben
+let filterEntfernung = "";
 document.querySelectorAll('#myDropdown a').forEach(item => {
-  item.addEventListener('click', function (e) {
-    e.preventDefault(); // verhindert Sprung nach oben
-    const button = document.getElementById("dropbtn");
-    button.textContent = this.textContent; // gewählten Text einsetzen
-    document.getElementById("myDropdown").classList.remove("show"); // Dropdown schließen
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById("dropbtn").textContent = this.textContent;
+    document.getElementById("myDropdown").classList.remove("show");
+
+    filterEntfernung = this.textContent.replace("m", "");
+    searchAtms();
   });
 });
 
-
-// generische Funktion zum Öffnen/Schließen
-function toggleDropdown(dropdownId) {
-  document.getElementById(dropdownId).classList.toggle("show");
-}
-
-// Klick auf Button2
-document.getElementById("dropbtn2").addEventListener("click", function(event) {
-  toggleDropdown("myDropdown2");
-  event.stopPropagation(); // verhindert, dass window.onclick sofort das Dropdown wieder schließt
-});
-
-// Auswahl einer Option
+let filterOeffnungszeiten = "";
 document.querySelectorAll("#myDropdown2 a").forEach(item => {
   item.addEventListener("click", function(e) {
     e.preventDefault();
     document.getElementById("dropbtn2").textContent = this.textContent;
     document.getElementById("myDropdown2").classList.remove("show");
+
+    filterOeffnungszeiten = this.textContent.toLowerCase();
+    searchAtms();
   });
 });
 
-
-
-// Klick auf Button3
-document.getElementById("dropbtn3").addEventListener("click", function(event) {
-  toggleDropdown("myDropdown3");
-  event.stopPropagation(); // verhindert, dass window.onclick sofort das Dropdown wieder schließt
-});
-
-// Auswahl einer Option
+let filterBankart = "";
 document.querySelectorAll("#myDropdown3 a").forEach(item => {
   item.addEventListener("click", function(e) {
     e.preventDefault();
     document.getElementById("dropbtn3").textContent = this.textContent;
     document.getElementById("myDropdown3").classList.remove("show");
+
+    filterBankart = this.textContent;
+    searchAtms();
   });
 });
 
+function toggleDropdown(dropdownId) {
+  document.getElementById(dropdownId).classList.toggle("show");
+}
+
+document.getElementById("dropbtn2").addEventListener("click", function(event) {
+  toggleDropdown("myDropdown2");
+  event.stopPropagation();
+});
+
+document.getElementById("dropbtn3").addEventListener("click", function(event) {
+  toggleDropdown("myDropdown3");
+  event.stopPropagation();
+});
 
 window.addEventListener("click", function(){
   document.querySelectorAll(".dropdown-content, .dropdown-content2, .dropdown-content3")
     .forEach(menu => menu.classList.remove("show"));
 });
 
-// Karte initialisieren (Mittelpunkt Deutschland)
+
+
+// KARTE
+
+
 const map = L.map('map').setView([51.1657, 10.4515], 6);
 
-// OpenStreetMap-Layer hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-//const lilaIcon = L.icon({
- // iconUrl: 'standortmarkerlila.png',
- // iconSize: [25, 41],
- // iconAnchor: [12, 41],
- // popupAnchor: [1, -34],
-//});
-
-//L.marker([atm.breite, atm.laenge], { icon: lilaIcon })
-//  .addTo(map)
- // .bindPopup("Dein Text");
-
-// Beispielmarker hinzufügen
-L.marker([52.5200, 13.4050])
-  .addTo(map)
-  .bindPopup('Geldautomat in Berlin');
-
-
-async function searchAtms() {
-  const query = document.querySelector(".suchleiste input").value;
-
-  // Anfrage an Backend
-  const response = await fetch(`http://localhost:3000/api/atms?search=${query}`);
-  const atms = await response.json();
-
-  console.log("Gefundene Geldautomaten:", atms);
-
-  // Karte aktualisieren
-  updateMap(atms);
-}
-
-// Eventlistener für die Suchleiste
-document.querySelector(".suchleiste input").addEventListener("input", searchAtms);
+const lilaIcon = L.icon({
+  iconUrl: 'iconlila.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
 
 let markers = [];
 
-// Funktion, um Marker zu aktualisieren
+
+
+// SUCHEN & FILTERN
+
+
+document.querySelector(".suchleiste input").addEventListener("input", searchAtms);
+
+async function searchAtms() {
+  const suchtext = document.querySelector(".suchleiste input").value;
+
+  const url = new URL("http://localhost:3000/api/atms");
+  url.searchParams.append("search", suchtext);
+
+  const response = await fetch(url);
+  const geldautomaten = await response.json();
+
+  applyFilters(geldautomaten);
+}
+
+
+
+// FILTERLOGIK
+
+
+function applyFilters(atms) {
+  let result = atms;
+
+
+  // BANKART
+
+  if (filterBankart) {
+    result = result.filter(a =>
+      a.bank.toLowerCase() === filterBankart.toLowerCase()
+    );
+  }
+
+  // ÖFFNUNGSZEITEN
+
+  if (filterOeffnungszeiten === "jetzt geöffnet") {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    result = result.filter(a => {
+      if (!a.oeffnungszeiten) return false;
+
+      const text = a.oeffnungszeiten.trim().toLowerCase();
+
+      // Fall 1: Immer geöffnet
+      if (text === "immer") return true;
+
+      // Fall 2: Zeitfenster z. B. "9-16 uhr"
+      const match = text.match(/(\d{1,2})\s*[-–]\s*(\d{1,2})/);
+
+      if (match) {
+        const start = parseInt(match[1]);
+        const end = parseInt(match[2]);
+
+        return currentHour >= start && currentHour < end;
+      }
+
+      return false;
+    });
+  }
+
+  if (filterEntfernung && userLat != null && userLng != null) {
+    const maxDist = Number(filterEntfernung);
+
+    result = result.filter(a => {
+      const dist = getDistance(userLat, userLng, a.breite, a.laenge);
+      return dist <= maxDist;
+    });
+  }
+
+  updateMap(result);
+}
+
+
+
+// MARKER ZEICHNEN
+
+
 function updateMap(atms) {
-  // alte Marker entfernen
-  markers.forEach(marker => map.removeLayer(marker));
+  markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  // neue Marker hinzufügen
   atms.forEach(atm => {
-    // prüfen, ob beide Werte existieren und Zahlen sind
-    if (atm.breite != null && atm.laenge != null) {
-      const lat = parseFloat(atm.breite);
-      const lng = parseFloat(atm.laenge);
+    if (!atm.breite || !atm.laenge) return;
 
-      if (!isNaN(lat) && !isNaN(lng)) {
-        const marker = L.marker([lat, lng], { icon: lilaIcon })
-          .addTo(map)
-          .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
-        markers.push(marker);
-      } else {
-        console.warn("Koordinaten sind keine Zahlen:", atm);
-      }
-    } else {
-      console.warn("Ungültige Koordinaten für ATM:", atm);
-    }
+    const marker = L.marker([atm.breite, atm.laenge], { icon: lilaIcon })
+      .addTo(map)
+      .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
+
+    markers.push(marker);
   });
 }
 
-function showUserLocation() {
-  if (!navigator.geolocation) {
-    alert("Dein Browser unterstützt keine Standortabfrage.");
-    return;
-  }
+// ENTFERNUNGSFUNKTION
 
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
 
-      // Marker oder Kreis für den Standort
-      const userMarker = L.circle([lat, lng], {
-        color: "#4b134f",
-        fillColor: "#70219a",
-        fillOpacity: 0.5,
-        radius: 50
-      }).addTo(map);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
 
-      // Karte auf Benutzerstandort zentrieren
-      map.setView([lat, lng], 15);
-
-      // Popup anzeigen
-      userMarker.bindPopup("Dein aktueller Standort").openPopup();
-    },
-    (error) => {
-      alert("Standort konnte nicht abgerufen werden: " + error.message);
-    }
-  );
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 
+
+// STANDORT
+
+
+let userLat = null;
+let userLng = null;
+
+function showUserLocation() {
+  if (!navigator.geolocation) {
+    alert("Standort nicht unterstützt.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition((pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
+    L.circle([userLat, userLng], {
+      color: "#4b134f",
+      fillColor: "#70219a",
+      fillOpacity: 0.5,
+      radius: 50
+    }).addTo(map);
+
+    map.setView([userLat, userLng], 15);
+  });
+}
