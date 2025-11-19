@@ -1,32 +1,35 @@
 
-document.getElementById("dropbtn").addEventListener("click", function(event){
-  toggleDropdown("myDropdown");
-  event.stopPropagation();
+
+$('#oeffnungszeitInput').clockpicker({
+  placement: 'bottom',
+  align: 'left',
+  autoclose: true,
+  donetext: 'Fertig',
+  twelvehour: false,
+  // wichtig: showOnFocus false simulieren
+  afterDone: function() {
+    $(this).blur(); // optional: Fokus wieder entfernen nach Auswahl
+  }
 });
+
+
+
 
 let filterEntfernung = "";
-document.querySelectorAll('#myDropdown a').forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById("dropbtn").textContent = this.textContent;
-    document.getElementById("myDropdown").classList.remove("show");
 
-    filterEntfernung = this.textContent.replace("m", "");
-    searchAtms();
-  });
+document.getElementById("entfernungInput").addEventListener("input", function() {
+  filterEntfernung = this.value;  // Meter als Zahl
+  searchAtms();                  // Karte sofort aktualisieren
 });
 
-let filterOeffnungszeiten = "";
-document.querySelectorAll("#myDropdown2 a").forEach(item => {
-  item.addEventListener("click", function(e) {
-    e.preventDefault();
-    document.getElementById("dropbtn2").textContent = this.textContent;
-    document.getElementById("myDropdown2").classList.remove("show");
+let filterUhrzeit = "";
 
-    filterOeffnungszeiten = this.textContent.toLowerCase();
-    searchAtms();
-  });
+document.getElementById("oeffnungszeitInput").addEventListener("input", function() {
+  filterUhrzeit = this.value;  // Format "HH:MM"
+  searchAtms();               // Karte aktualisieren
 });
+
+
 
 let filterBankart = "";
 document.querySelectorAll("#myDropdown3 a").forEach(item => {
@@ -44,10 +47,7 @@ function toggleDropdown(dropdownId) {
   document.getElementById(dropdownId).classList.toggle("show");
 }
 
-document.getElementById("dropbtn2").addEventListener("click", function(event) {
-  toggleDropdown("myDropdown2");
-  event.stopPropagation();
-});
+
 
 document.getElementById("dropbtn3").addEventListener("click", function(event) {
   toggleDropdown("myDropdown3");
@@ -55,10 +55,9 @@ document.getElementById("dropbtn3").addEventListener("click", function(event) {
 });
 
 window.addEventListener("click", function(){
-  document.querySelectorAll(".dropdown-content, .dropdown-content2, .dropdown-content3")
+  document.querySelectorAll(".dropdown-content3")
     .forEach(menu => menu.classList.remove("show"));
 });
-
 
 
 // KARTE
@@ -118,10 +117,8 @@ function applyFilters(atms) {
 
   // ÖFFNUNGSZEITEN
 
-  if (filterOeffnungszeiten === "jetzt geöffnet") {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
+  if (filterUhrzeit) {
+    const [inputHour, inputMinute] = filterUhrzeit.split(":").map(Number);
 
     result = result.filter(a => {
       if (!a.oeffnungszeiten) return false;
@@ -131,19 +128,28 @@ function applyFilters(atms) {
       // Fall 1: Immer geöffnet
       if (text === "immer") return true;
 
-      // Fall 2: Zeitfenster z. B. "9-16 uhr"
-      const match = text.match(/(\d{1,2})\s*[-–]\s*(\d{1,2})/);
+      // Fall 2: Zeitbereich wie "9:00 - 16:00" oder "09:30 - 17:15"
+      const match = text.match(/(\d{1,2}):?(\d{2})?\s*[-–]\s*(\d{1,2}):?(\d{2})?/);
 
-      if (match) {
-        const start = parseInt(match[1]);
-        const end = parseInt(match[2]);
+      if (!match) return false;
 
-        return currentHour >= start && currentHour < end;
-      }
+      // Startzeit
+      const startHour = parseInt(match[1]);
+      const startMinute = match[2] ? parseInt(match[2]) : 0;
 
-      return false;
+      // Endzeit
+      const endHour = parseInt(match[3]);
+      const endMinute = match[4] ? parseInt(match[4]) : 0;
+
+      // Vergleich in Minuten
+      const userMinutes = inputHour * 60 + inputMinute;
+      const startMinutes = startHour * 60 + startMinute;
+      const endMinutes = endHour * 60 + endMinute;
+
+      return userMinutes >= startMinutes && userMinutes <= endMinutes;
     });
   }
+
 
   if (filterEntfernung && userLat != null && userLng != null) {
     const maxDist = Number(filterEntfernung);

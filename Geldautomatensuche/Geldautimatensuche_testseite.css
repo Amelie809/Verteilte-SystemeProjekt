@@ -151,61 +151,20 @@ body {
   color: black;
   font-size: 15px;
   font-weight: bold;
+  margin-top: 200px;
+  margin-left: 5%;
+}
+
+.entfernung-feld {
+  width: 160px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #4b134f;
+  font-size: 16px;
   position: absolute;
-  top: 300px;
+  top: 40%;
   left: 5%;
 }
-
-.dropbtn {
-  background-color: #4b134f;
-  color: white;
-  padding: 20px 30px ;
-  margin-top: 220px;
-border-radius: 10px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-
-
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: lightgray;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  margin-left: 5%;
-  z-index: 1000;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 2000;
-  border-radius: 15px;
-}
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
 
 .Öffnungszeit {
   font-family: Arial, sans-serif;
@@ -217,51 +176,29 @@ border-radius: 10px;
   left: 25%;
 }
 
-.dropbtn2 {
-  background-color: #4b134f;
-  color: white;
-  padding: 20px 30px;
-  border-radius: 10px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Hover-Effekt */
-.dropbtn2:hover, .dropbtn2:focus {
-  background-color: lightgray;
-}
-
-/* Container */
-.dropdown2 {
-  position: relative; /* wichtig: Dropdown-Liste wird relativ zum Button positioniert */
+.time-picker-wrapper {
+  position: absolute;
+  top: 20px;
+  left: 25%;
   display: inline-block;
-  margin-left: 13%;  /* Abstand von links */
-  margin-top: 25px; /* Abstand nach oben */
-  z-index: 1000;
 }
 
-/* Dropdown-Inhalt */
-.dropdown-content2 {
-  display: none;
-  position: absolute;  /* relativ zum Container .dropdown2 */
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-  z-index: 2000;
-  border-radius: 15px;
+.oeffnungszeit-feld {
+  width: 160px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #4b134f;
+  font-size: 16px;
 }
 
-/* Links */
-.dropdown-content2 a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content2 a:hover {
-  background-color: #ddd;
+.clock-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
 }
 
 .Bankart {
@@ -291,10 +228,10 @@ border-radius: 10px;
 
 /* Container */
 .dropdown3 {
-  position: relative; /* wichtig: Dropdown-Liste wird relativ zum Button positioniert */
   display: inline-block;
-  margin-left: 13%;  /* Abstand von links */
-  margin-top: 25px; /* Abstand nach oben */
+  position: absolute;
+  top: 39%;
+  left: 47%;
   z-index: 1000;
 }
 
