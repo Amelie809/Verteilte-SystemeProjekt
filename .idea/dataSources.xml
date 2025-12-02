@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="DatenbankProjektVS" uuid="a91935fa-c3fa-43b4-959d-10adbed163e3">
+    <data-source source="LOCAL" name="DatenbankProjektVS3" uuid="c31431dd-30c2-4417-9bb0-87b6136e9bbc">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/Geldautomatensuche/Backend/DatenbankProjektVS.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/Geldautomatensuche/Backend/DatenbankProjektVS3.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

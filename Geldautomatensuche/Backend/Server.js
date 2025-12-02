@@ -15,7 +15,7 @@ app.use(express.json());
 
 // Verbindung zur SQLite-Datenbank
 const db = await open({
-  filename: "DatenbankProjektVS2.db",
+  filename: "DatenbankProjektVS3.db",
   driver: sqlite3.Database
 });
 
@@ -27,8 +27,10 @@ app.get("/api/atms", async (req, res) => {
     "FROM Geldautomat\n" +
     "WHERE stadt LIKE ? \n" +
     "   OR bank LIKE ? \n" +
+    "   OR adresse LIKE ? \n" +
+    "   OR CAST(postleitzahl AS TEXT) LIKE ?\n" +
     "   OR name LIKE ?;",
-    search, search, search
+    search, search, search, search, search
   );
   res.json(rows);
 });

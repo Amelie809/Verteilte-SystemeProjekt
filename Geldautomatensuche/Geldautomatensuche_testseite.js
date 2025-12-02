@@ -5,21 +5,18 @@ $('#oeffnungszeitInput').clockpicker({
   align: 'left',
   autoclose: true,
   donetext: 'Fertig',
-  twelvehour: false,
-  // wichtig: showOnFocus false simulieren
-  afterDone: function() {
-    $(this).blur(); // optional: Fokus wieder entfernen nach Auswahl
-  }
+  twelvehour: false
+}).on('change', function() {
+  filterUhrzeit = this.value;
+  searchAtms();
 });
-
-
 
 
 let filterEntfernung = "";
 
 document.getElementById("entfernungInput").addEventListener("input", function() {
   filterEntfernung = this.value;  // Meter als Zahl
-  searchAtms();                  // Karte sofort aktualisieren
+  searchAtms();                  // Karte aktualisieren
 });
 
 let filterUhrzeit = "";
@@ -161,6 +158,45 @@ function applyFilters(atms) {
   }
 
   updateMap(result);
+  geldautomatenListeAktualisieren(result);
+
+}
+
+// Seitenpanel
+document.getElementById("Seitenfenster").addEventListener("click", () => {
+  document.getElementById("geldautomatSeitenpanel").classList.toggle("offen");
+});
+
+function geldautomatenListeAktualisieren(geldautomaten) {
+  const liste = document.getElementById("geldautomatListeninhalt");
+  liste.innerHTML = "";
+
+  if (geldautomaten.length === 0) {
+    liste.innerHTML = "<p>Keine Standorte gefunden.</p>";
+    return;
+  }
+
+  console.log(geldautomaten[0]);
+  geldautomaten.forEach(g => {
+    const feld = document.createElement("div");
+    feld.className = "geldautomatKarte";
+
+    feld.innerHTML = `
+      <strong>${g.bank}</strong><br>
+      ${g.name}<br>
+      <small>${g.adresse} ${g.postleitzahl} ${g.stadt}</small><br>
+      Öffnungszeiten: ${g.oeffnungszeiten || "Keine Angaben"}<br>
+    `;
+
+    // Beim Klicken Karte auf den Geldautomaten zentrieren
+    feld.addEventListener("click", () => {
+      if (g.breite && g.laenge) {
+        map.setView([g.breite, g.laenge], 17);
+      }
+    });
+
+    liste.appendChild(feld);
+  });
 }
 
 
