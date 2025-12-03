@@ -217,7 +217,6 @@ function entfernungBerechnen(lat1, lon1, lat2, lon2) {
 }
 
 // STANDORT
-
 let nutzerBreite = null;
 let nutzerLaenge = null;
 
@@ -226,7 +225,6 @@ function nutzerStandortAnzeigen() {
     alert("Standort nicht unterstützt.");
     return;
   }
-
   navigator.geolocation.getCurrentPosition((pos) => {
     nutzerBreite = pos.coords.latitude;
     nutzerLaenge = pos.coords.longitude;
