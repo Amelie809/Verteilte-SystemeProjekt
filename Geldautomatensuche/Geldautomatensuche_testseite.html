@@ -28,11 +28,11 @@
 
 <div class="Überschrift">Filiale oder Geldautomat suchen</div>
 <div class="suchleiste">
-  <input type="text" placeholder="Wo wollen Sie suchen?" oninput="searchAtms()">
+  <input type="text" placeholder="Wo wollen Sie suchen?" oninput="geldautomatenSuchen()">
 </div>
 
 <div class="standort">
-  <button class="location-btn" onclick="showUserLocation()">
+  <button class="standortbutton" onclick="nutzerStandortAnzeigen()">
     <img src="Standortmarkerbild.png" alt="Standort" />
   </button>
   <div class="standort-kästchen">Zeige den eigenen Standort an</div>
@@ -49,7 +49,7 @@
 
 <div class="Öffnungszeit">Öffnungszeiten:</div>
 
-<div class="time-picker-wrapper" style="position: relative; display: inline-block;">
+<div class="Oeffnungszeiten">
   <input
     id="oeffnungszeitInput"
     type="time"
@@ -66,9 +66,9 @@
 
 <div class="Bankart">Bankarten:</div>
 
-<div class="dropdown3">
-  <button id="dropbtn3" class="dropbtn3">Wähle</button>
-  <div id="myDropdown3" class="dropdown-content3">
+<div class="dropdown">
+  <button id="dropbtn" class="dropbtn">Wähle</button>
+  <div id="meinDropdown" class="dropdown-content">
     <a href="#">Sparkasse</a>
     <a href="#">Volksbank</a>
     <a href="#">Commerzbank</a>

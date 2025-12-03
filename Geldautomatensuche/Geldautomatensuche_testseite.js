@@ -1,5 +1,4 @@
 
-
 $('#oeffnungszeitInput').clockpicker({
   placement: 'bottom',
   align: 'left',
@@ -8,64 +7,56 @@ $('#oeffnungszeitInput').clockpicker({
   twelvehour: false
 }).on('change', function() {
   filterUhrzeit = this.value;
-  searchAtms();
+  geldautomatenSuchen();
 });
-
 
 let filterEntfernung = "";
 
 document.getElementById("entfernungInput").addEventListener("input", function() {
-  filterEntfernung = this.value;  // Meter als Zahl
-  searchAtms();                  // Karte aktualisieren
+  filterEntfernung = this.value;  // Meter
+  geldautomatenSuchen();
 });
 
 let filterUhrzeit = "";
 
 document.getElementById("oeffnungszeitInput").addEventListener("input", function() {
-  filterUhrzeit = this.value;  // Format "HH:MM"
-  searchAtms();               // Karte aktualisieren
+  filterUhrzeit = this.value;
+  geldautomatenSuchen();
 });
 
-
-
 let filterBankart = "";
-document.querySelectorAll("#myDropdown3 a").forEach(item => {
+document.querySelectorAll("#meinDropdown a").forEach(item => {
   item.addEventListener("click", function(e) {
     e.preventDefault();
-    document.getElementById("dropbtn3").textContent = this.textContent;
-    document.getElementById("myDropdown3").classList.remove("show");
+    document.getElementById("dropbtn").textContent = this.textContent;
+    document.getElementById("meinDropdown").classList.remove("show");
 
     filterBankart = this.textContent;
-    searchAtms();
+    geldautomatenSuchen();
   });
 });
 
-function toggleDropdown(dropdownId) {
+function dropdownUmschalten(dropdownId) {
   document.getElementById(dropdownId).classList.toggle("show");
 }
 
-
-
-document.getElementById("dropbtn3").addEventListener("click", function(event) {
-  toggleDropdown("myDropdown3");
+document.getElementById("dropbtn").addEventListener("click", function(event) {
+  dropdownUmschalten("meinDropdown");
   event.stopPropagation();
 });
 
 window.addEventListener("click", function(){
-  document.querySelectorAll(".dropdown-content3")
+  document.querySelectorAll(".dropdown-content")
     .forEach(menu => menu.classList.remove("show"));
 });
 
 
-// KARTE
-
-
-const map = L.map('map').setView([51.1657, 10.4515], 6);
+const karte = L.map('map').setView([51.1657, 10.4515], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+  attribution: '&copy; OpenStreetMap'
+}).addTo(karte);
 
 const lilaIcon = L.icon({
   iconUrl: 'iconlila.png',
@@ -74,16 +65,12 @@ const lilaIcon = L.icon({
   popupAnchor: [1, -34],
 });
 
-let markers = [];
+let markerListe = [];
 
 
+document.querySelector(".suchleiste input").addEventListener("input", geldautomatenSuchen);
 
-// SUCHEN & FILTERN
-
-
-document.querySelector(".suchleiste input").addEventListener("input", searchAtms);
-
-async function searchAtms() {
+async function geldautomatenSuchen() {
   const suchtext = document.querySelector(".suchleiste input").value;
 
   const url = new URL("http://localhost:3000/api/atms");
@@ -92,82 +79,64 @@ async function searchAtms() {
   const response = await fetch(url);
   const geldautomaten = await response.json();
 
-  applyFilters(geldautomaten);
+  filterAnwenden(geldautomaten);
 }
 
 
-
-// FILTERLOGIK
-
-
-function applyFilters(atms) {
-  let result = atms;
-
-
-  // BANKART
+function filterAnwenden(atms) {
+  let ergebnis = atms;
 
   if (filterBankart) {
-    result = result.filter(a =>
+    ergebnis = ergebnis.filter(a =>
       a.bank.toLowerCase() === filterBankart.toLowerCase()
     );
   }
 
-  // ÖFFNUNGSZEITEN
-
   if (filterUhrzeit) {
-    const [inputHour, inputMinute] = filterUhrzeit.split(":").map(Number);
+    const [inputStunde, inputMinute] = filterUhrzeit.split(":").map(Number);
 
-    result = result.filter(a => {
+    ergebnis = ergebnis.filter(a => {
       if (!a.oeffnungszeiten) return false;
 
       const text = a.oeffnungszeiten.trim().toLowerCase();
 
-      // Fall 1: Immer geöffnet
       if (text === "immer") return true;
 
-      // Fall 2: Zeitbereich wie "9:00 - 16:00" oder "09:30 - 17:15"
       const match = text.match(/(\d{1,2}):?(\d{2})?\s*[-–]\s*(\d{1,2}):?(\d{2})?/);
-
       if (!match) return false;
 
-      // Startzeit
-      const startHour = parseInt(match[1]);
+      const startStunde = parseInt(match[1]);
       const startMinute = match[2] ? parseInt(match[2]) : 0;
-
-      // Endzeit
-      const endHour = parseInt(match[3]);
+      const endStunde = parseInt(match[3]);
       const endMinute = match[4] ? parseInt(match[4]) : 0;
 
-      // Vergleich in Minuten
-      const userMinutes = inputHour * 60 + inputMinute;
-      const startMinutes = startHour * 60 + startMinute;
-      const endMinutes = endHour * 60 + endMinute;
+      const nutzerMinuten = inputStunde * 60 + inputMinute;
+      const startMinuten = startStunde * 60 + startMinute;
+      const endMinuten = endStunde * 60 + endMinute;
 
-      return userMinutes >= startMinutes && userMinutes <= endMinutes;
+      return nutzerMinuten >= startMinuten && nutzerMinuten <= endMinuten;
     });
   }
 
-
-  if (filterEntfernung && userLat != null && userLng != null) {
+  if (filterEntfernung && nutzerBreite != null && nutzerLaenge != null) {
     const maxDist = Number(filterEntfernung);
 
-    result = result.filter(a => {
-      const dist = getDistance(userLat, userLng, a.breite, a.laenge);
+    ergebnis = ergebnis.filter(a => {
+      const dist = entfernungBerechnen(nutzerBreite, nutzerLaenge, a.breite, a.laenge);
       return dist <= maxDist;
     });
   }
 
-  updateMap(result);
-  geldautomatenListeAktualisieren(result);
-
+  karteAktualisieren(ergebnis);
+  listeAktualisieren(ergebnis);
 }
 
-// Seitenpanel
+
 document.getElementById("Seitenfenster").addEventListener("click", () => {
   document.getElementById("geldautomatSeitenpanel").classList.toggle("offen");
 });
 
-function geldautomatenListeAktualisieren(geldautomaten) {
+function listeAktualisieren(geldautomaten) {
   const liste = document.getElementById("geldautomatListeninhalt");
   liste.innerHTML = "";
 
@@ -176,7 +145,6 @@ function geldautomatenListeAktualisieren(geldautomaten) {
     return;
   }
 
-  console.log(geldautomaten[0]);
   geldautomaten.forEach(g => {
     const feld = document.createElement("div");
     feld.className = "geldautomatKarte";
@@ -184,14 +152,13 @@ function geldautomatenListeAktualisieren(geldautomaten) {
     feld.innerHTML = `
       <strong>${g.bank}</strong><br>
       ${g.name}<br>
-      <small>${g.adresse} ${g.postleitzahl} ${g.stadt}</small><br>
+      <small>${g.adresse}, ${g.postleitzahl} ${g.stadt}</small><br>
       Öffnungszeiten: ${g.oeffnungszeiten || "Keine Angaben"}<br>
     `;
 
-    // Beim Klicken Karte auf den Geldautomaten zentrieren
     feld.addEventListener("click", () => {
       if (g.breite && g.laenge) {
-        map.setView([g.breite, g.laenge], 17);
+        karte.setView([g.breite, g.laenge], 17);
       }
     });
 
@@ -200,28 +167,42 @@ function geldautomatenListeAktualisieren(geldautomaten) {
 }
 
 
+// MARKER
+function karteAktualisieren(atms) {
+  // Alte Marker entfernen
+  markerListe.forEach(m => karte.removeLayer(m));
+  markerListe = [];
 
-// MARKER ZEICHNEN
+  const koordinaten = [];
 
-
-function updateMap(atms) {
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-
+  // Neue Marker setzen
   atms.forEach(atm => {
     if (!atm.breite || !atm.laenge) return;
 
     const marker = L.marker([atm.breite, atm.laenge], { icon: lilaIcon })
-      .addTo(map)
+      .addTo(karte)
       .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
 
-    markers.push(marker);
+    markerListe.push(marker);
+
+    koordinaten.push([atm.breite, atm.laenge]);
   });
+
+  //  ZOOM
+  if (koordinaten.length > 0) {
+    const bounds = L.latLngBounds(koordinaten);
+
+    karte.fitBounds(bounds, {
+      padding: [50, 50],
+      maxZoom: 13,
+      animate: true
+    });
+  }
 }
 
-// ENTFERNUNGSFUNKTION
 
-function getDistance(lat1, lon1, lat2, lon2) {
+
+function entfernungBerechnen(lat1, lon1, lat2, lon2) {
   const R = 6371000;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -235,31 +216,28 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-
-
 // STANDORT
 
+let nutzerBreite = null;
+let nutzerLaenge = null;
 
-let userLat = null;
-let userLng = null;
-
-function showUserLocation() {
+function nutzerStandortAnzeigen() {
   if (!navigator.geolocation) {
     alert("Standort nicht unterstützt.");
     return;
   }
 
   navigator.geolocation.getCurrentPosition((pos) => {
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
+    nutzerBreite = pos.coords.latitude;
+    nutzerLaenge = pos.coords.longitude;
 
-    L.circle([userLat, userLng], {
+    L.circle([nutzerBreite, nutzerLaenge], {
       color: "#4b134f",
       fillColor: "#70219a",
       fillOpacity: 0.5,
       radius: 50
-    }).addTo(map);
+    }).addTo(karte);
 
-    map.setView([userLat, userLng], 15);
+    karte.setView([nutzerBreite, nutzerLaenge], 15);
   });
 }

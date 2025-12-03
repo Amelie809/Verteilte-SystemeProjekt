@@ -28,7 +28,7 @@ app.get("/api/atms", async (req, res) => {
     "WHERE stadt LIKE ? \n" +
     "   OR bank LIKE ? \n" +
     "   OR adresse LIKE ? \n" +
-    "   OR CAST(postleitzahl AS TEXT) LIKE ?\n" +
+    "   OR CAST(postleitzahl AS TEXT) LIKE ? \n" +
     "   OR name LIKE ?;",
     search, search, search, search, search
   );
