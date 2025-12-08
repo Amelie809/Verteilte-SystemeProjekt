@@ -10,15 +10,29 @@ Filter: Filter nach Bankart, Öffnungszeiten, Entfernung und Öffnungszeit.
 Interaktive Karte: Zeigt gefilterte Geldautomaten mit Leaflet-Kartenintegration.
 Standortbestimmung: Nutzer können den eigenen Standort anzeigen lassen.
 Anzeige gefundener Geldautomaten: Liste in Form eines Seitenfensters mit Details zu den gerade
-auf der Karte angezeigten Geldautomaten wie Bank, Name und Stadt.
+ auf der Karte angezeigten Geldautomaten.
 Chatbot: Beantwortet Fragen des Nutzers zu der Webseite.
+
+ Beschreibung der SQLite Datenbank
+Die Anwendung verwendet eine lokale SQLite-Datenbank, in der alle Geldautomaten gespeichert sind. Die Datenbank wird
+vom Backend (node.js/express/lokale API) ausgelesen und als JSON an das Frontend weitergeleitet.
+
+Tabellenstruktur
+id  INTEGER (Primary Key)  z.B. 1
+name TEXT                  z.B. Geldautomat/Filiale
+bank TEXT                  z.B. Sparkasse/Volksbank/...
+stadt TEXT                 z.B. Ravensburg/München
+breite REAL                z.B. Koordinaten
+laenge REAL                z.B. Koordinaten
+oeffnungszeiten TEXT       z.B. 09:00 - 16:00/Immer
+adresse TEXT               z.B. Marienplatz 28/...
+postleitzahl INTEGER       z.B. 88212/...
 
 2. Software-Design
 
    Designüberlegungen
 Modularität: JavaScript-Funktionen für Suche, Filter, Karte und Marker sind getrennt.
 Datenorientiert: Filterlogik und Marker-Updates arbeiten direkt auf der Datenbank-Response (API / JSON), sodass UI unabhängig bleibt.
-Responsive UX: Buttons, Eingabefelder und Tooltipps passen sich dem Layout an.
 Erweiterbarkeit: Neue Filter (z. B. Einzahlfunktion) lassen sich leicht hinzufügen.
 Leaflet-Integration: Leaflet für Karte und Marker, um einfache Interaktivität zu gewährleisten.
 
@@ -27,6 +41,7 @@ Filter-Logik im Frontend: Alle Filter werden clientseitig angewendet, um schnell
 Separate Eingabefelder statt Dropdowns: Flexiblere Eingabe (z. B. Entfernung in Metern, Uhrzeit) verbessert UX.
 Tooltipps für Standort: Zeigt direkt zusätzliche Informationen beim Hover über den Standort-Button.
 OpenStreetMap + Leaflet: Open-Source-Lösung für Karten, einfach zu integrieren, leichtgewichtig.
+Chatbot: Verbessert Nutzerfreundlichkeit.
 
 3. Integration
 
@@ -39,16 +54,16 @@ Chatbot: Beantwortet Fragen des Nutzers.
 
  Zur Gesamtsoftware
 Die Webanwendung kann als Frontend mit einem Backend (Node.js / Express / lokale API) kommunizieren.
-API liefert JSON mit Geldautomaten-Daten (Bank, Name, Stadt, Koordinaten, Öffnungszeiten).
+API liefert JSON mit Geldautomaten-Daten (Nr,Bank, Name, Stadt, Koordinaten, Öffnungszeiten, Postleitzahl, Adresse).
 Frontend verarbeitet die Daten, wendet Filter an und aktualisiert die Karte sowie die Listenanzeige.
 
 4. Verwendete Technologien
 
-HTML5 / CSS3: Struktur und Layout der Webseite.
+HTML / CSS: Struktur und Layout der Webseite.
 JavaScript: Frontend-Logik für Suche, Filter und Kartenintegration.
 Leaflet.js: Interaktive Kartenanzeige und Marker-Management.
 jQuery & Clockpicker: Eingabe von Uhrzeiten mit interaktivem Widget.
-Bootstrap: Modernes Layout, Buttons, Eingabefelder, responsive Gestaltung.
+Bootstrap: Modernes Layout für das Seitenfenster.
 OpenStreetMap Tiles: Kartendaten für Leaflet.
 Chatbase: Layout & Logik für den Chatbot.
 Backend: Node.js + Express für die Bereitstellung der Geldautomaten-Daten als JSON API.
@@ -57,10 +72,12 @@ Backend: Node.js + Express für die Bereitstellung der Geldautomaten-Daten als J
 
 Frontend-Filterlogik: Im ursprünglichen ACD war vorgesehen, dass Filter im Backend verarbeitet werden.
  In der aktuellen Implementierung werden die Filter clientseitig angewendet, um schnelle Interaktivität zu gewährleisten.
-Uhrzeitfilter: Das ACD sah nur Text-basierte Öffnungszeiten vor. Jetzt wird eine echte Uhrzeit-Eingabe genutzt,
+Öffnungszeitenfilter: Das ACD sah nur Text-basierte Öffnungszeiten vor. Jetzt wird eine echte Uhrzeit-Eingabe genutzt,
  die den Status des Geldautomaten prüft.
 Entfernungseingabe: Statt Dropdowns für feste Entfernungen kann der Nutzer jetzt beliebige Werte eingeben.
 Integration von Clockpicker: Wurde im ACD nicht spezifiziert, ist aber für die UX bei der Zeitangabe notwendig.
 Tooltip für Standort: Zusätzliche visuelle Rückmeldung, die im ursprünglichen Design nicht vorgesehen war.
-Seitenfenster der angezeigten Geldautomaten:
-Bootstrap: Optional eingebunden zur Verbesserung des Layouts und der Konsistenz von Buttons und Eingabefeldern.
+Seitenfenster der angezeigten Geldautomaten: Ebenfalls eine zusätzliche visuelle Rückmeldung über die gefilterten
+ Geldautomaten auf der Karte.
+Chatbot: Zusätzliche Funktion um die Nutzerfreundlichkeit zu verbessern.
+Bootstrap: Optional eingebunden zur Verbesserung des Layouts beim Seitenfenster.
