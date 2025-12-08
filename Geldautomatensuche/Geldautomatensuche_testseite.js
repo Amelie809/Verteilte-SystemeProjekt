@@ -132,9 +132,10 @@ function filterAnwenden(atms) {
 }
 
 
-document.getElementById("Seitenfenster").addEventListener("click", () => {
-  document.getElementById("geldautomatSeitenpanel").classList.toggle("offen");
+  document.getElementById("seitenpanelBtn").addEventListener("click", function () {
+  document.getElementById("seitenpanel").classList.toggle("offen");
 });
+
 
 function listeAktualisieren(geldautomaten) {
   const liste = document.getElementById("geldautomatListeninhalt");

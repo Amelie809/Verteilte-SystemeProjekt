@@ -263,36 +263,45 @@ body {
   display: block;
 }
 
-.geldautomatSeitenpanel {
+
+.seitenpanel-btn {
+  position: fixed;
+  top: 115px;
+  left: 500px;
+  z-index: 1050;
+
+  background-color: #4b134f !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px;
+  padding: 10px 20px;
+}
+
+.seitenpanel-btn:hover {
+  background-color: #815A83 !important;
+  color: white !important;
+}
+
+
+
+.seitenpanel {
   position: fixed;
   top: 0;
   right: -350px;
   width: 350px;
   height: 100%;
   background: #815A83;
-  border-left: 2px solid #ccc;
-  padding: 15px;
+  border-left: 1px solid #ccc;
+  padding: 20px;
   overflow-y: auto;
-  transition: right 0.3s ease;
-  z-index: 9999;
+  transition: right 0.35s ease;
+  z-index: 2000;
 }
 
-.geldautomatSeitenpanel.offen {
+.seitenpanel.offen {
   right: 0;
 }
 
-.Seitenfenster {
-  position: fixed;
-  top: 115px;
-  left: 500px;
-  z-index: 10000;
-  padding: 10px 15px;
-  background: #4b134f;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
 
 .geldautomatKarte {
   margin-bottom: 15px;
