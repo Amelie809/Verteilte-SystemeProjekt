@@ -13,11 +13,37 @@ button{
 }
 button:hover{
   background-color: hsl(0, 0%, 60%);}
-.box{
+.box {
   position: absolute;
   bottom: 50%;
   left: 30%;
-
-
-
 }
+
+  body {
+    background-color: #203864;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+  }
+
+.stern {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: gold;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%,
+    68% 57%, 79% 91%, 50% 70%,
+    21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  animation: schweben infinite ease-in-out alternate;
+}
+
+@keyframes schweben {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+
+

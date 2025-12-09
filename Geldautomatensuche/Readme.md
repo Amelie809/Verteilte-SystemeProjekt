@@ -65,6 +65,7 @@ Leaflet.js: Interaktive Kartenanzeige und Marker-Management.
 jQuery & Clockpicker: Eingabe von Uhrzeiten mit interaktivem Widget.
 Bootstrap: Modernes Layout für das Seitenfenster.
 OpenStreetMap Tiles: Kartendaten für Leaflet.
+Google Maps: Anzeige der Rote zum Geldautomaten.
 Chatbase: Layout & Logik für den Chatbot.
 Backend: Node.js + Express für die Bereitstellung der Geldautomaten-Daten als JSON API.
 
@@ -79,5 +80,6 @@ Integration von Clockpicker: Wurde im ACD nicht spezifiziert, ist aber für die 
 Tooltip für Standort: Zusätzliche visuelle Rückmeldung, die im ursprünglichen Design nicht vorgesehen war.
 Seitenfenster der angezeigten Geldautomaten: Ebenfalls eine zusätzliche visuelle Rückmeldung über die gefilterten
  Geldautomaten auf der Karte.
+Routenanzeige: Statt die Routenanzeige auf der Karte anzuzeigen, wird nun auf Google Maps verwiesen.
 Chatbot: Zusätzliche Funktion um die Nutzerfreundlichkeit zu verbessern.
 Bootstrap: Optional eingebunden zur Verbesserung des Layouts beim Seitenfenster.

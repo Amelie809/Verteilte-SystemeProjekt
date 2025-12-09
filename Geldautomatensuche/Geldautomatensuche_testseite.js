@@ -182,7 +182,10 @@ function karteAktualisieren(atms) {
 
     const marker = L.marker([atm.breite, atm.laenge], { icon: lilaIcon })
       .addTo(karte)
-      .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}`);
+      .bindPopup(`${atm.bank} – ${atm.name}<br>${atm.stadt}<br>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${atm.breite},${atm.laenge}" target="_blank">
+          Route mit Google Maps
+        </a>`);
 
     markerListe.push(marker);
 
