@@ -13,14 +13,16 @@ $('#oeffnungszeitInput').clockpicker({
 let filterEntfernung = "";
 
 document.getElementById("entfernungInput").addEventListener("input", function() {
-  filterEntfernung = this.value;  // Meter
+  const wert = parseInt(this.value);
+  filterEntfernung = isNaN(wert) ? "" : wert;
   geldautomatenSuchen();
 });
 
 let filterUhrzeit = "";
 
 document.getElementById("oeffnungszeitInput").addEventListener("input", function() {
-  filterUhrzeit = this.value;
+  const regex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  filterUhrzeit = regex.test(this.value) ? this.value : "";
   geldautomatenSuchen();
 });
 
@@ -68,7 +70,14 @@ const lilaIcon = L.icon({
 let markerListe = [];
 
 
-document.querySelector(".suchleiste input").addEventListener("input", geldautomatenSuchen);
+function sanitizeSearchInput(text) {
+  return text.replace(/[<>]/g, "");  // entfernt Tags
+}
+
+document.querySelector(".suchleiste input").addEventListener("input", function() {
+  this.value = sanitizeSearchInput(this.value);
+  geldautomatenSuchen();
+});
 
 async function geldautomatenSuchen() {
   const suchtext = document.querySelector(".suchleiste input").value;
